@@ -45,6 +45,8 @@ export interface Collection {
   price_positioning?: string;
   drop_type?: string;
   complexity_level?: string;
+  fabric_brief?: string;
+  description?: string;
   contract_value: number;
   target_margin_pct: number;
   currency: string;
