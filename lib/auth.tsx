@@ -58,13 +58,23 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 orgId = member.organization_id || ORG_ID;
             } else {
                 // Layer 2: Bootstrap — if no DB record, check if this is the designated admin email.
-                // Set NEXT_PUBLIC_ADMIN_EMAIL in .env.local to your studio owner email.
                 const adminEmail = process.env.NEXT_PUBLIC_ADMIN_EMAIL;
                 if (adminEmail && supabaseUser.email?.toLowerCase() === adminEmail.toLowerCase()) {
                     role = 'ADMIN';
-                    console.warn('[Auth] No organization_members record found for admin email. Using env fallback. Run the SQL setup script to fix permanently.');
+                    // Silently persist the admin row to the DB so this only needs to run once
+                    fetch('/api/setup-admin', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            user_id: supabaseUser.id,
+                            email: supabaseUser.email,
+                            name: supabaseUser.user_metadata?.name || supabaseUser.email,
+                            organization_id: ORG_ID,
+                        }),
+                    }).catch(() => { }); // silent — env var is the fallback if this fails
                 }
             }
+
 
 
             setUser({

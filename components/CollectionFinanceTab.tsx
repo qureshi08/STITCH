@@ -612,55 +612,55 @@ export function CollectionFinanceTab({ collection, onUpdate }: CollectionFinance
                             </div>
                         </div>
 
-                        {/* SECTION C: Detailed Expense Log */}
+                        {/* SECTION C: Detailed Expense Log — Client can mark expenses as Paid */}
                         <div className="ms-card overflow-hidden">
-                            <table className="w-full text-left border-collapse">
-                                <thead>
-                                    <tr className="bg-ms-beige/30 border-b border-ms-border">
-                                        <th className="p-4 text-[9px] font-black uppercase tracking-widest text-ms-gray">Expense Log</th>
-                                        <th className="p-4 text-[9px] font-black uppercase tracking-widest text-ms-gray">Category</th>
-                                        <th className="p-4 text-[9px] font-black uppercase tracking-widest text-ms-gray text-right">Amount</th>
-                                        <th className="p-4 text-[9px] font-black uppercase tracking-widest text-ms-gray text-center">Receipt</th>
-                                        <th className="p-4 text-[9px] font-black uppercase tracking-widest text-ms-gray text-right">Status</th>
-                                    </tr>
-                                </thead>
-                                <tbody className="divide-y divide-ms-border/40">
+                            <div className="p-5 border-b border-ms-border bg-ms-beige/10 flex items-center justify-between">
+                                <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-ms-black">Project Expenses</h4>
+                                <p className="text-[10px] text-ms-gray font-black uppercase tracking-widest opacity-60">Click &ldquo;Mark as Paid&rdquo; once you have made the transfer</p>
+                            </div>
+                            {expenses.length === 0 ? (
+                                <div className="p-16 text-center text-ms-gray/40 text-[10px] font-bold uppercase tracking-widest">No expenses logged for this project yet.</div>
+                            ) : (
+                                <div className="divide-y divide-ms-border/50">
                                     {expenses.map(exp => (
-                                        <tr key={exp.id} className="hover:bg-ms-beige/5 transition-colors">
-                                            <td className="p-4">
-                                                <p className="text-[11px] font-bold text-ms-black">{exp.description || exp.vendor_name}</p>
-                                                <p className="text-[9px] text-ms-gray mt-0.5 uppercase tracking-tighter">{new Date(exp.incurred_date).toLocaleDateString()}</p>
-                                            </td>
-                                            <td className="p-4">
-                                                <span className="text-[9px] font-black uppercase bg-ms-beige/50 px-2 py-0.5 rounded text-ms-gray">{exp.category}</span>
-                                            </td>
-                                            <td className="p-4 text-right">
-                                                <p className="text-sm font-bold font-mono text-ms-black">{collection.currency} {Number(exp.amount).toLocaleString()}</p>
-                                            </td>
-                                            <td className="p-4 text-center">
-                                                {exp.invoice_url ? (
-                                                    <a href={exp.invoice_url} target="_blank" className="p-1 px-2 border border-ms-border rounded text-[9px] font-black uppercase hover:bg-ms-black hover:text-white transition-all inline-flex items-center gap-1">
-                                                        <FileText className="w-3 h-3" /> View
-                                                    </a>
-                                                ) : <span className="text-[9px] text-ms-gray opacity-30 italic">No Scan</span>}
-                                            </td>
-                                            <td className="p-4 text-right">
-                                                <span className={cn(
-                                                    "text-[9px] font-black uppercase tracking-tighter",
-                                                    exp.reimbursement_status === 'REIMBURSED' ? "text-green-600" : "text-orange-600"
-                                                )}>
-                                                    {exp.reimbursement_status}
-                                                </span>
-                                            </td>
-                                        </tr>
+                                        <div key={exp.id} className="p-6 flex items-center justify-between hover:bg-ms-beige/5 transition-colors">
+                                            <div className="flex-1">
+                                                <div className="flex items-center gap-3 mb-1">
+                                                    <span className="text-[9px] font-black uppercase bg-ms-beige/50 px-2 py-0.5 rounded text-ms-gray">{exp.category}</span>
+                                                    <span className="text-[9px] text-ms-gray opacity-50">{new Date(exp.incurred_date).toLocaleDateString()}</span>
+                                                </div>
+                                                <p className="font-bold text-ms-black text-sm">{exp.description || exp.vendor_name || 'Project Expense'}</p>
+                                                {exp.invoice_url && (
+                                                    <a href={exp.invoice_url} target="_blank" className="text-[9px] font-black uppercase tracking-widest text-ms-black underline mt-1 inline-block">View Receipt</a>
+                                                )}
+                                            </div>
+                                            <div className="text-right flex-shrink-0 ml-6">
+                                                <p className="text-lg font-bold font-mono text-ms-black">{collection.currency} {Number(exp.amount).toLocaleString()}</p>
+                                                {exp.reimbursement_status === 'REIMBURSED' ? (
+                                                    <span className="inline-flex items-center gap-1.5 text-[9px] font-black uppercase tracking-widest text-green-700 bg-green-50 border border-green-100 px-3 py-1.5 rounded mt-2">
+                                                        <CheckCircle2 className="w-3 h-3" /> Payment Confirmed
+                                                    </span>
+                                                ) : (
+                                                    <button
+                                                        onClick={() => handleUpdateExpense(exp.id, 'REIMBURSED')}
+                                                        disabled={updatingId === exp.id}
+                                                        className="mt-2 text-[9px] font-black uppercase tracking-widest bg-ms-black text-white px-4 py-1.5 rounded hover:bg-ms-black/80 transition-colors flex items-center gap-1.5 ml-auto disabled:opacity-50"
+                                                    >
+                                                        {updatingId === exp.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <CheckCircle2 className="w-3 h-3" />}
+                                                        Mark as Paid
+                                                    </button>
+                                                )}
+                                            </div>
+                                        </div>
                                     ))}
-                                </tbody>
-                            </table>
+                                </div>
+                            )}
                         </div>
                     </>
                 )}
             </div>
         );
+
     }
 
     return (
