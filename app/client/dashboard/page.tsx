@@ -1,0 +1,174 @@
+
+"use client"
+
+import React, { useEffect, useState } from 'react';
+import {
+    Layers, Package, DollarSign, ArrowRight,
+    Loader2, Clock, CheckCircle2
+} from 'lucide-react';
+import Link from 'next/link';
+import { useAuth } from '@/lib/auth';
+import { getDashboardStats, getCollections } from '@/lib/api';
+import { useRouter } from 'next/navigation';
+
+export default function ClientDashboard() {
+    const { user } = useAuth();
+    const router = useRouter();
+    const [stats, setStats] = useState<any>(null);
+    const [collections, setCollections] = useState<any[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        if (user && user.role !== 'CLIENT') {
+            router.push('/');
+            return;
+        }
+    }, [user, router]);
+
+    useEffect(() => {
+        async function load() {
+            if (!user?.organization_id || user.role !== 'CLIENT') return;
+            try {
+                const s = await getDashboardStats(user.organization_id, user.role, user.id);
+                setStats(s);
+                const cols = await getCollections(user.organization_id, user.role, user.id);
+                setCollections(cols);
+            } catch (err) {
+                console.error(err);
+            } finally {
+                setIsLoading(false);
+            }
+        }
+        load();
+    }, [user?.organization_id]);
+
+    if (isLoading) return <div className="h-96 flex items-center justify-center"><Loader2 className="w-8 h-8 animate-spin text-ms-gray" /></div>;
+
+    return (
+        <div className="space-y-10 pb-20 animate-in fade-in duration-700">
+            {/* Header */}
+            <div>
+                <h1 className="text-4xl font-bold text-ms-black font-serif italic tracking-tighter">Client Portal</h1>
+                <p className="text-[11px] font-black uppercase tracking-[0.2em] text-ms-gray mt-3">
+                    Overview of your projects with Maryam Shahid Studio
+                </p>
+            </div>
+
+            {/* Stats Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="ms-card p-6 flex flex-col justify-between hover:shadow-lg transition-all border-ms-border/50 group">
+                    <div className="flex items-center justify-between">
+                        <div className="p-2.5 rounded-xl flex items-center justify-center bg-blue-50 text-blue-600">
+                            <Package className="w-5 h-5" />
+                        </div>
+                    </div>
+                    <div className="mt-6 flex items-end justify-between">
+                        <div>
+                            <p className="text-[10px] font-black uppercase tracking-widest text-ms-gray mb-1 opacity-60">Project Status</p>
+                            <p className="text-2xl font-bold font-serif text-ms-black">{collections.length} Active</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="ms-card p-6 flex flex-col justify-between hover:shadow-lg transition-all border-ms-border/50 group">
+                    <div className="flex items-center justify-between">
+                        <div className="p-2.5 rounded-xl flex items-center justify-center bg-orange-50 text-orange-600">
+                            <Clock className="w-5 h-5" />
+                        </div>
+                    </div>
+                    <div className="mt-6 flex items-end justify-between">
+                        <div>
+                            <p className="text-[10px] font-black uppercase tracking-widest text-ms-gray mb-1 opacity-60">Pending Milestone Payments</p>
+                            <p className="text-2xl font-bold font-serif text-ms-black">{stats?.upcomingInvoices?.length || 0}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="ms-card p-6 flex flex-col justify-between hover:shadow-lg transition-all border-ms-border/50 bg-ms-beige group">
+                    <div className="flex items-center justify-between">
+                        <div className="p-2.5 rounded-xl flex items-center justify-center bg-white text-ms-black">
+                            <DollarSign className="w-5 h-5" />
+                        </div>
+                    </div>
+                    <div className="mt-6 flex items-end justify-between">
+                        <div>
+                            <p className="text-[10px] font-black uppercase tracking-widest text-ms-gray mb-1 opacity-60">Outstanding Balance</p>
+                            <p className="text-2xl font-bold font-serif text-ms-black">${(stats?.totalReceivable || 0).toLocaleString()}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div className="lg:col-span-2 space-y-6">
+                    <h3 className="text-[11px] font-black uppercase tracking-[0.3em] text-ms-black flex items-center gap-2">
+                        <Layers className="w-4 h-4" /> Your Active Projects
+                    </h3>
+                    <div className="space-y-4">
+                        {collections.length === 0 ? (
+                            <div className="ms-card p-20 text-center border-dashed border-2">
+                                <Package className="w-10 h-10 text-ms-gray/20 mx-auto mb-4" />
+                                <p className="text-sm font-bold text-ms-black">No active projects assigned</p>
+                                <p className="text-xs text-ms-gray mt-1">Maryam Shahid Studio will initiate your collections shortly.</p>
+                            </div>
+                        ) : (
+                            collections.map(c => (
+                                <Link key={c.id} href={`/client/collections/${c.id}`} className="ms-card p-6 flex items-center justify-between group hover:border-ms-black/30 transition-all">
+                                    <div className="flex gap-5 items-center">
+                                        <div className="w-12 h-12 bg-ms-beige text-ms-black rounded-xl flex items-center justify-center group-hover:bg-ms-black group-hover:text-white transition-colors">
+                                            <Package className="w-6 h-6" />
+                                        </div>
+                                        <div>
+                                            <h4 className="text-base font-bold text-ms-black group-hover:underline">{c.name}</h4>
+                                            <div className="flex items-center gap-3 mt-1.5">
+                                                <span className="text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded bg-blue-50 text-blue-700">
+                                                    {c.status}
+                                                </span>
+                                                {c.season && (
+                                                    <>
+                                                        <span className="w-1 h-1 rounded-full bg-ms-border" />
+                                                        <span className="text-[10px] font-black uppercase tracking-widest text-ms-gray opacity-60">
+                                                            {c.season}
+                                                        </span>
+                                                    </>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <ArrowRight className="w-4 h-4 text-ms-gray/20 group-hover:text-ms-black transition-colors transform group-hover:translate-x-1" />
+                                </Link>
+                            ))
+                        )}
+                    </div>
+                </div>
+
+                <div className="space-y-6">
+                    <h3 className="text-[11px] font-black uppercase tracking-[0.3em] text-ms-black flex items-center gap-2">
+                        <DollarSign className="w-4 h-4" /> Pending Billing
+                    </h3>
+                    <div className="ms-card divide-y divide-ms-border/50">
+                        {stats?.upcomingInvoices && stats.upcomingInvoices.length > 0 ? (
+                            stats.upcomingInvoices.map((inv: any) => (
+                                <Link key={inv.id} href={`/client/collections/${inv.collection_id}?tab=finance`} className="block p-5 hover:bg-ms-beige/10 transition-colors cursor-pointer group">
+                                    <div className="flex justify-between items-start mb-1">
+                                        <p className="text-sm font-bold text-ms-black group-hover:text-red-500 transition-colors">{inv.milestone_name}</p>
+                                        <p className="text-sm font-mono font-bold">${Number(inv.amount).toLocaleString()}</p>
+                                    </div>
+                                    <p className="text-[10px] font-black uppercase tracking-widest text-ms-gray opacity-50 flex items-center gap-2">
+                                        <Clock className="w-3 h-3" />
+                                        Due {new Date(inv.due_date).toLocaleDateString()}
+                                    </p>
+                                </Link>
+                            ))
+                        ) : (
+                            <div className="p-12 text-center text-ms-gray/40">
+                                <CheckCircle2 className="w-8 h-8 mx-auto mb-3 opacity-20 text-green-500" />
+                                <p className="text-[10px] font-black uppercase tracking-widest">All caught up!</p>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+}

@@ -1,0 +1,64 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", "Outfit", system-ui, sans-serif;
+  
+  --color-ms-bg: #FFFFFF;
+  --color-ms-beige: #F5F5F0;
+  --color-ms-black: #1A1A1A;
+  --color-ms-gray: #717171;
+  --color-ms-border: #E5E5E0;
+  
+  --color-status-progress: #3B82F6; /* Blue */
+  --color-status-revision: #F97316; /* Orange */
+  --color-status-approved: #22C55E; /* Green */
+  --color-status-blocked: #EF4444;  /* Red */
+
+  --shadow-ms: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  --shadow-ms-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+}
+
+:root {
+  --background: #FFFFFF;
+  --foreground: #1A1A1A;
+}
+
+@layer base {
+  * {
+    border-color: var(--color-ms-border);
+  }
+  body {
+    background-color: var(--color-ms-bg);
+    color: var(--foreground);
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
+/* Custom UI Elements */
+.ms-sidebar {
+  @apply bg-ms-beige border-r border-ms-border h-screen sticky top-0 overflow-y-auto w-64;
+}
+
+.ms-card {
+  @apply bg-white border border-ms-border rounded-lg shadow-ms overflow-hidden transition-all hover:shadow-ms-lg;
+}
+
+.ms-table-header {
+  @apply bg-ms-beige/50 text-ms-gray text-xs uppercase tracking-wider py-3 px-4 text-left font-medium;
+}
+
+.ms-table-cell {
+  @apply py-3 px-4 border-b border-ms-border text-sm;
+}
+
+.ms-button-primary {
+  @apply bg-ms-black text-white px-4 py-2 rounded-md transition-all active:scale-95 text-sm font-medium disabled:opacity-50;
+}
+
+.ms-button-secondary {
+  @apply border border-ms-border bg-white text-ms-black px-4 py-2 rounded-md transition-all active:scale-95 text-sm font-medium hover:bg-ms-beige;
+}
+
+.status-badge {
+  @apply text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full inline-flex items-center;
+}
