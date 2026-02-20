@@ -37,7 +37,7 @@ export async function middleware(request: NextRequest) {
             .from('organization_members')
             .select('role')
             .eq('user_id', user.id)
-            .single()
+            .maybeSingle()
 
         const role = member?.role
 
@@ -45,15 +45,27 @@ export async function middleware(request: NextRequest) {
         if (pathname === '/login' || pathname === '/') {
             if (role === 'ADMIN') return NextResponse.redirect(new URL('/admin/dashboard', request.url))
             if (role === 'CLIENT') return NextResponse.redirect(new URL('/client/dashboard', request.url))
+            // If user exists but no role found yet, let them stay on home or handle elsewhere
+            // but definitely don't loop.
         }
 
         // 4. Role-based Route Protection
-        if (pathname.startsWith('/admin') && role !== 'ADMIN') {
-            return NextResponse.redirect(new URL('/client/dashboard', request.url))
-        }
+        // ONLY redirect if we actually have a role to compare against to avoid infinite loops
+        if (role) {
+            if (pathname.startsWith('/admin') && role !== 'ADMIN') {
+                return NextResponse.redirect(new URL('/client/dashboard', request.url))
+            }
 
-        if (pathname.startsWith('/client') && role !== 'CLIENT') {
-            return NextResponse.redirect(new URL('/admin/dashboard', request.url))
+            if (pathname.startsWith('/client') && role !== 'CLIENT') {
+                return NextResponse.redirect(new URL('/admin/dashboard', request.url))
+            }
+        } else if (!isPublicRoute) {
+             // Optional: If logged in but NO role in DB, and trying to access protected routes
+             // You might want to redirect to a 'pending' or 'error' page.
+             // For now, let's just not loop. Redirecting to / might stay safe if / is public.
+             if (pathname.startsWith('/admin') || pathname.startsWith('/client')) {
+                 return NextResponse.redirect(new URL('/', request.url))
+             }
         }
     }
 
