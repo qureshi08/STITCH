@@ -22,20 +22,22 @@ import {
 // COLLECTIONS
 // ============================================================
 
-export async function getCollections(orgId: string, role?: string, userId?: string): Promise<Collection[]> {
-    let query = supabase
+export async function getCollections(orgId: string, role?: string, userId?: string, client?: any): Promise<Collection[]> {
+    const supabaseClient = client || supabase;
+
+    let query = supabaseClient
         .from('collections')
         .select('*')
         .eq('organization_id', orgId);
 
     // If it's a client, only show collections they are assigned to
     if (role === 'CLIENT' && userId) {
-        const { data: assignments } = await supabase
+        const { data: assignments } = await supabaseClient
             .from('collection_assignments')
             .select('collection_id')
             .eq('user_id', userId);
 
-        const ids = (assignments || []).map(a => a.collection_id);
+        const ids = (assignments || []).map((a: any) => a.collection_id);
         if (ids.length === 0) return [];
         query = query.in('id', ids);
     }
@@ -45,8 +47,9 @@ export async function getCollections(orgId: string, role?: string, userId?: stri
     return data as Collection[];
 }
 
-export async function getCollectionDetail(id: string): Promise<Collection | null> {
-    const { data, error } = await supabase
+export async function getCollectionDetail(id: string, client?: any): Promise<Collection | null> {
+    const supabaseClient = client || supabase;
+    const { data, error } = await supabaseClient
         .from('collections')
         .select('*')
         .eq('id', id)
@@ -84,8 +87,9 @@ export async function deleteCollection(id: string): Promise<boolean> {
 // GARMENTS (PLM Core)
 // ============================================================
 
-export async function getCollectionGarments(collectionId: string): Promise<Garment[]> {
-    const { data, error } = await supabase
+export async function getCollectionGarments(collectionId: string, client?: any): Promise<Garment[]> {
+    const supabaseClient = client || supabase;
+    const { data, error } = await supabaseClient
         .from('garments')
         .select('*')
         .eq('collection_id', collectionId)
@@ -94,8 +98,9 @@ export async function getCollectionGarments(collectionId: string): Promise<Garme
     return data as Garment[];
 }
 
-export async function getGarmentDetail(id: string): Promise<Garment | null> {
-    const { data, error } = await supabase
+export async function getGarmentDetail(id: string, client?: any): Promise<Garment | null> {
+    const supabaseClient = client || supabase;
+    const { data, error } = await supabaseClient
         .from('garments')
         .select('*')
         .eq('id', id)
@@ -212,20 +217,21 @@ export async function updateSamplingLog(id: string, updates: Partial<SamplingLog
 // CLIENT INVOICES (Receivables)
 // ============================================================
 
-export async function getClientInvoices(orgId: string, role?: string, userId?: string): Promise<ClientInvoice[]> {
-    let query = supabase
+export async function getClientInvoices(orgId: string, role?: string, userId?: string, client?: any): Promise<ClientInvoice[]> {
+    const supabaseClient = client || supabase;
+    let query = supabaseClient
         .from('client_invoices')
         .select('*')
         .eq('organization_id', orgId);
 
     // If it's a client, only show invoices for their collections
     if (role === 'CLIENT' && userId) {
-        const { data: assignments } = await supabase
+        const { data: assignments } = await supabaseClient
             .from('collection_assignments')
             .select('collection_id')
             .eq('user_id', userId);
 
-        const ids = (assignments || []).map(a => a.collection_id);
+        const ids = (assignments || []).map((a: any) => a.collection_id);
         if (ids.length === 0) return [];
         query = query.in('collection_id', ids);
     }
@@ -274,8 +280,9 @@ export async function deleteClientInvoice(id: string): Promise<boolean> {
 // VENDOR INVOICES (Payables)
 // ============================================================
 
-export async function getVendorInvoices(orgId: string): Promise<VendorInvoice[]> {
-    const { data, error } = await supabase
+export async function getVendorInvoices(orgId: string, client?: any): Promise<VendorInvoice[]> {
+    const supabaseClient = client || supabase;
+    const { data, error } = await supabaseClient
         .from('vendor_invoices')
         .select('*')
         .eq('organization_id', orgId)
@@ -516,13 +523,14 @@ export async function deleteProjectExpense(id: string): Promise<boolean> {
     return true;
 }
 
-export async function getDashboardStats(orgId: string, role?: string, userId?: string) {
+export async function getDashboardStats(orgId: string, role?: string, userId?: string, client?: any) {
+    const supabaseClient = client || supabase;
     const [collections, invoices, salaryPayments, projectExpenses, vendorInvoices] = await Promise.all([
-        getCollections(orgId, role, userId),
-        getClientInvoices(orgId, role, userId),
-        supabase.from('salary_payments').select('*').eq('status', 'PAID'),
-        supabase.from('expenses').select('*').eq('organization_id', orgId),
-        getVendorInvoices(orgId)
+        getCollections(orgId, role, userId, supabaseClient),
+        getClientInvoices(orgId, role, userId, supabaseClient),
+        supabaseClient.from('salary_payments').select('*').eq('status', 'PAID'),
+        supabaseClient.from('expenses').select('*').eq('organization_id', orgId),
+        getVendorInvoices(orgId, supabaseClient)
     ]);
 
     const sPayments = (salaryPayments.data || []) as SalaryPayment[];

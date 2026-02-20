@@ -1,40 +1,31 @@
 
-"use client"
+import { createClient } from '@/lib/supabase/server';
+import { redirect } from 'next/navigation';
+import { ShellLayoutClient } from '@/components/ShellLayoutClient';
 
-import React, { useEffect } from 'react';
-import { useAuth } from '@/lib/auth';
-import { Sidebar, TopBar } from '@/components/Layout';
-import { useRouter } from 'next/navigation';
-import { Loader2 } from 'lucide-react';
+export default async function ClientLayout({ children }: { children: React.ReactNode }) {
+    const supabase = await createClient();
 
-export default function ClientLayout({ children }: { children: React.ReactNode }) {
-    const { user, isLoading } = useAuth();
-    const router = useRouter();
-    const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
+    // Server-side check for hard protection
+    const { data: { user } } = await supabase.auth.getUser();
 
-    useEffect(() => {
-        if (!isLoading && (!user || user.role !== 'CLIENT')) {
-            router.push('/login');
-        }
-    }, [user, isLoading, router]);
+    if (!user) {
+        redirect('/login');
+    }
 
-    if (isLoading || !user || user.role !== 'CLIENT') {
-        return (
-            <div className="min-h-screen bg-ms-black flex items-center justify-center">
-                <Loader2 className="w-6 h-6 animate-spin text-white/30" />
-            </div>
-        );
+    const { data: member } = await supabase
+        .from('organization_members')
+        .select('role')
+        .eq('user_id', user.id)
+        .single();
+
+    if (member?.role !== 'CLIENT') {
+        redirect('/admin/dashboard');
     }
 
     return (
-        <div className="flex min-h-screen bg-ms-bg">
-            <Sidebar role="CLIENT" isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
-            <div className="flex-1 flex flex-col min-w-0">
-                <TopBar role="CLIENT" setIsOpen={setIsSidebarOpen} />
-                <main className="flex-1 p-4 lg:p-8 pb-16 overflow-auto">
-                    {children}
-                </main>
-            </div>
-        </div>
+        <ShellLayoutClient role="CLIENT">
+            {children}
+        </ShellLayoutClient>
     );
 }
