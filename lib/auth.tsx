@@ -49,8 +49,23 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 .eq('user_id', supabaseUser.id)
                 .single();
 
-            const role: UserRole = (member?.role as UserRole) || 'CLIENT';
-            const orgId = member?.organization_id || ORG_ID;
+            // Layer 1: Check organization_members table
+            let role: UserRole = 'CLIENT';
+            let orgId = ORG_ID;
+
+            if (member) {
+                role = (member.role as UserRole) || 'CLIENT';
+                orgId = member.organization_id || ORG_ID;
+            } else {
+                // Layer 2: Bootstrap — if no DB record, check if this is the designated admin email.
+                // Set NEXT_PUBLIC_ADMIN_EMAIL in .env.local to your studio owner email.
+                const adminEmail = process.env.NEXT_PUBLIC_ADMIN_EMAIL;
+                if (adminEmail && supabaseUser.email?.toLowerCase() === adminEmail.toLowerCase()) {
+                    role = 'ADMIN';
+                    console.warn('[Auth] No organization_members record found for admin email. Using env fallback. Run the SQL setup script to fix permanently.');
+                }
+            }
+
 
             setUser({
                 id: supabaseUser.id,
