@@ -129,7 +129,7 @@ export default function ClientCollectionDetailPage({ params }: { params: Promise
                             <div className="ms-card p-10 bg-white">
                                 <h3 className="text-[11px] font-black uppercase tracking-[0.4em] text-ms-black mb-8">Production Status</h3>
                                 <p className="text-sm leading-relaxed text-ms-gray/80 italic font-serif text-lg">
-                                    "{collection.description || 'Your collection is currently moving through Maryam Shahid Studio's proprietary pre-production pipeline. Track piece-by-piece progress in the Garments tab.'}"
+                                    &ldquo;{collection.description || "Your collection is currently moving through the studio's proprietary pre-production pipeline. Track piece-by-piece progress in the Garments tab."}&rdquo;
                                 </p>
                             </div>
                         </div>
