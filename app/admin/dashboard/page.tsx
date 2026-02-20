@@ -69,24 +69,37 @@ export default function AdminDashboard() {
                     { label: 'Active Projects', value: stats?.activeCollections || 0, icon: Layers, color: 'text-blue-600', bg: 'bg-blue-50' },
                     { label: 'Unpaid Client Ledger', value: `$${(stats?.totalReceivable || 0).toLocaleString()}`, icon: DollarSign, color: 'text-orange-600', bg: 'bg-orange-50' },
                     { label: 'Studio Earnings (YTD)', value: `$${(stats?.totalEarnings || 0).toLocaleString()}`, icon: CheckCircle2, color: 'text-green-600', bg: 'bg-green-50' },
-                    { label: 'Live Studio Cash', value: `$${(stats?.netLiquidity || 0).toLocaleString()}`, icon: TrendingUp, color: 'text-ms-black', bg: 'bg-ms-beige' },
+                    {
+                        label: 'Available Studio Cash',
+                        sub: 'Total Liquid Earnings',
+                        value: `$${(stats?.netLiquidity || 0).toLocaleString()}`,
+                        icon: TrendingUp,
+                        color: 'text-white',
+                        bg: 'bg-ms-black/20',
+                        isInverse: true
+                    },
                 ].map((s, i) => (
-                    <div key={i} className="ms-card p-6 flex flex-col justify-between hover:shadow-lg transition-all border-ms-border/50">
+                    <div key={i} className={cn(
+                        "ms-card p-6 flex flex-col justify-between hover:shadow-lg transition-all border-ms-border/50",
+                        s.isInverse ? "bg-ms-black text-white" : "bg-white"
+                    )}>
                         <div className="flex items-center justify-between">
                             <div className={cn("p-2.5 rounded-xl flex items-center justify-center", s.bg, s.color)}>
                                 <s.icon className="w-5 h-5" />
                             </div>
-                            <ArrowRight className="w-4 h-4 text-ms-gray/20" />
+                            <ArrowRight className={cn("w-4 h-4", s.isInverse ? "text-white/20" : "text-ms-gray/20")} />
                         </div>
                         <div className="mt-6 flex items-end justify-between">
                             <div>
-                                <p className="text-[10px] font-black uppercase tracking-widest text-ms-gray mb-1 opacity-60">{s.label}</p>
-                                <p className="text-2xl font-bold font-serif text-ms-black">{s.value}</p>
+                                <p className={cn("text-[10px] font-black uppercase tracking-widest mb-1", s.isInverse ? "text-white/60" : "text-ms-gray opacity-60")}>{s.label}</p>
+                                <p className={cn("text-2xl font-bold font-serif", s.isInverse ? "text-white" : "text-ms-black")}>{s.value}</p>
+                                {s.sub && <p className={cn("text-[8px] font-black uppercase tracking-[0.2em] mt-2", s.isInverse ? "text-white/30" : "text-ms-gray opacity-40")}>{s.sub}</p>}
                             </div>
                         </div>
                     </div>
                 ))}
             </div>
+
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* Recent Collections */}
