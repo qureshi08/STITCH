@@ -12,8 +12,8 @@ const cormorant = Cormorant_Garamond({
 });
 
 export const metadata: Metadata = {
-  title: "STITCH – Fashion OS",
-  description: "Enterprise pre-production lifecycle management for Maryam Shahid Studio.",
+  title: "STITCH – Fashion Operating System",
+  description: "Enterprise pre-production lifecycle management for fashion studios.",
 };
 
 export default function RootLayout({

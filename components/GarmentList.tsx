@@ -7,6 +7,7 @@ import { Plus, ChevronRight, Lock, Unlock, Trash2, Loader2, Scissors } from 'luc
 import { cn } from '@/lib/utils';
 import { createGarment, deleteGarment } from '@/lib/api';
 import { Garment, GarmentStage } from '@/types';
+import { useAuth } from '@/lib/auth';
 
 const STAGE_ORDER: GarmentStage[] = [
     'ILLUSTRATION', 'PATTERN', 'TECH_PACK', 'SAMPLING',
@@ -34,6 +35,7 @@ interface GarmentListProps {
 }
 
 export function GarmentList({ collectionId, garments, onRefresh, canEdit, orgId }: GarmentListProps) {
+    const { user } = useAuth();
     const [isAdding, setIsAdding] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
     const [form, setForm] = useState({ name: '', sku: '', category: '' });
@@ -213,7 +215,10 @@ export function GarmentList({ collectionId, garments, onRefresh, canEdit, orgId 
                                     {/* Actions */}
                                     <div className="flex items-center gap-2 flex-shrink-0">
                                         <Link
-                                            href={`/collections/${g.collection_id}/garments/${g.id}`}
+                                            href={user?.role === 'ADMIN'
+                                                ? `/admin/collections/${g.collection_id}/garments/${g.id}`
+                                                : `/client/collections/${g.collection_id}/garments/${g.id}`
+                                            }
                                             className="flex items-center gap-1.5 px-4 py-2 bg-ms-black text-white text-[9px] font-black uppercase tracking-widest rounded-lg hover:bg-ms-black/80 transition-colors"
                                         >
                                             Manage
