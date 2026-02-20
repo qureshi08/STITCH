@@ -130,7 +130,7 @@ export function CollectionFinanceTab({ collection, onUpdate }: CollectionFinance
                             title: 'New Billing Milestone',
                             content: `Maryam created a new invoice: ${form.milestone_name} ($${Number(form.amount).toLocaleString()}).`,
                             type: 'INFO',
-                            link: user?.role === 'ADMIN' ? `/admin/collections/${collection.id}?tab=finance` : `/client/collections/${collection.id}?tab=finance`
+                            link: `/client/collections/${collection.id}?tab=finance`
                         });
                     }
                 }
@@ -280,7 +280,7 @@ export function CollectionFinanceTab({ collection, onUpdate }: CollectionFinance
                             title: 'Payment Sent',
                             content: `${user.name} marked "${inv.milestone_name}" as paid. Please verify.`,
                             type: 'WARNING',
-                            link: user?.role === 'ADMIN' ? `/admin/collections/${collection.id}?tab=finance` : `/client/collections/${collection.id}?tab=finance`
+                            link: `/admin/collections/${collection.id}?tab=finance`
                         });
                     }
                 }
@@ -299,7 +299,7 @@ export function CollectionFinanceTab({ collection, onUpdate }: CollectionFinance
                             title: 'Payment Verified',
                             content: `Maryam verified your payment for "${inv.milestone_name}". Thank you!`,
                             type: 'SUCCESS',
-                            link: user?.role === 'ADMIN' ? `/admin/collections/${collection.id}?tab=finance` : `/client/collections/${collection.id}?tab=finance`
+                            link: `/client/collections/${collection.id}?tab=finance`
                         });
                     }
                 }
