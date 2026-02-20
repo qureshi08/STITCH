@@ -21,23 +21,46 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
+        let mounted = true;
+
         // Check real Supabase session
-        supabase.auth.getSession().then(async ({ data: { session } }) => {
-            if (session?.user) {
-                await resolveSupabaseUser(session.user);
+        const initSession = async () => {
+            try {
+                const { data: { session } } = await supabase.auth.getSession();
+                if (mounted) {
+                    if (session?.user) {
+                        await resolveSupabaseUser(session.user);
+                    } else {
+                        setIsLoading(false);
+                    }
+                }
+            } catch (e) {
+                console.error('Auth init error:', e);
+                if (mounted) setIsLoading(false);
             }
-            setIsLoading(false);
-        });
+        };
+
+        initSession();
 
         const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
             if (session?.user) {
                 await resolveSupabaseUser(session.user);
             } else {
                 setUser(null);
+                setIsLoading(false);
             }
         });
 
-        return () => subscription.unsubscribe();
+        // Safety timeout — never stay on loading for more than 10s
+        const timer = setTimeout(() => {
+            if (mounted) setIsLoading(false);
+        }, 10000);
+
+        return () => {
+            mounted = false;
+            subscription.unsubscribe();
+            clearTimeout(timer);
+        };
     }, []);
 
     const resolveSupabaseUser = async (supabaseUser: any) => {
@@ -86,6 +109,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             });
         } catch (err) {
             console.error('Failed to resolve user role:', err);
+        } finally {
+            setIsLoading(false);
         }
     };
 
