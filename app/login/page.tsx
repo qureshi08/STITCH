@@ -33,12 +33,13 @@ export default function LoginPage() {
             <div className="w-full max-w-md space-y-10 animate-in fade-in slide-in-from-bottom-6 duration-700">
                 {/* Logo */}
                 <div className="text-center space-y-3">
-                    <h1 className="text-6xl font-black tracking-[0.3em] text-white font-serif italic">STITCH</h1>
-                    <p className="text-[10px] font-black uppercase tracking-[0.4em] text-white/30">Fashion Operating System</p>
+                    <h1 className="text-4xl sm:text-6xl font-black tracking-[0.3em] text-white font-serif italic uppercase">Stitch</h1>
+                    <p className="text-[9px] sm:text-[10px] font-black uppercase tracking-[0.4em] text-white/30">Fashion Operating System</p>
                 </div>
 
                 {/* Card */}
-                <div className="bg-white rounded-2xl p-10 shadow-2xl shadow-black/50 space-y-8">
+                <div className="bg-white rounded-2xl p-6 sm:p-10 shadow-2xl shadow-black/50 space-y-8">
+
                     <div>
                         <h2 className="text-2xl font-bold font-serif text-ms-black">Sign In</h2>
                         <p className="text-[11px] font-black uppercase tracking-[0.2em] text-ms-gray mt-2">Enter your studio credentials</p>

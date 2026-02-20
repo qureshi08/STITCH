@@ -163,78 +163,84 @@ export function GarmentList({ collectionId, garments, onRefresh, canEdit, orgId 
                         const progress = Math.round((stageIdx(g) / (STAGE_ORDER.length - 1)) * 100);
                         return (
                             <div key={g.id} className="ms-card hover:border-ms-black/30 transition-all group">
-                                <div className="p-6 flex items-center gap-6">
-                                    {/* Progress bar as left accent */}
-                                    <div className="w-1 self-stretch bg-ms-beige rounded-full overflow-hidden flex-shrink-0">
-                                        <div
-                                            className="w-full bg-ms-black rounded-full transition-all"
-                                            style={{ height: `${progress}%` }}
-                                        />
+                                <div className="p-4 sm:p-6 flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6">
+                                    <div className="flex items-center gap-4 flex-1">
+                                        {/* Progress bar as left accent */}
+                                        <div className="w-1 self-stretch bg-ms-beige rounded-full overflow-hidden flex-shrink-0 min-h-[40px]">
+                                            <div
+                                                className="w-full bg-ms-black rounded-full transition-all"
+                                                style={{ height: `${progress}%` }}
+                                            />
+                                        </div>
+
+                                        {/* Info */}
+                                        <div className="flex-1 min-w-0">
+                                            <div className="flex items-center gap-3 mb-1 sm:mb-2">
+                                                <span className="text-[9px] font-black font-mono uppercase tracking-widest text-ms-gray bg-ms-beige px-2 py-0.5 rounded">
+                                                    {g.sku}
+                                                </span>
+                                                {g.category && (
+                                                    <span className="hidden xs:inline text-[9px] font-black uppercase tracking-widest text-ms-gray opacity-50">{g.category}</span>
+                                                )}
+                                                {g.is_locked && (
+                                                    <span title="Stage locked"><Lock className="w-3 h-3 text-ms-gray" /></span>
+                                                )}
+                                            </div>
+                                            <h4 className="text-sm sm:text-base font-bold text-ms-black truncate">{g.name}</h4>
+
+                                            {/* Stage pipeline mini - hidden on tiny screens */}
+                                            <div className="hidden sm:flex items-center gap-1 mt-3">
+                                                {STAGE_ORDER.map((stage, i) => (
+                                                    <div
+                                                        key={stage}
+                                                        className={cn(
+                                                            "h-1.5 flex-1 rounded-full transition-all",
+                                                            i < stageIdx(g) ? "bg-ms-black" :
+                                                                i === stageIdx(g) ? "bg-ms-black/40" :
+                                                                    "bg-ms-beige"
+                                                        )}
+                                                        title={stage}
+                                                    />
+                                                ))}
+                                            </div>
+                                        </div>
                                     </div>
 
-                                    {/* Info */}
-                                    <div className="flex-1 min-w-0">
-                                        <div className="flex items-center gap-3 mb-2">
-                                            <span className="text-[9px] font-black font-mono uppercase tracking-widest text-ms-gray bg-ms-beige px-2 py-0.5 rounded">
-                                                {g.sku}
-                                            </span>
-                                            {g.category && (
-                                                <span className="text-[9px] font-black uppercase tracking-widest text-ms-gray opacity-50">{g.category}</span>
-                                            )}
-                                            {g.is_locked && (
-                                                <span title="Stage locked"><Lock className="w-3 h-3 text-ms-gray" /></span>
-                                            )}
-                                        </div>
-                                        <h4 className="text-base font-bold text-ms-black">{g.name}</h4>
+                                    {/* Right side: Badge + Actions */}
+                                    <div className="flex sm:flex-row items-center justify-between sm:justify-end gap-3 sm:gap-4 mt-2 sm:mt-0 pl-5 sm:pl-0">
+                                        {/* Stage badge */}
+                                        <span className={cn(
+                                            "text-[9px] font-black uppercase tracking-widest px-3 py-1.5 rounded-lg border",
+                                            STAGE_COLOR[g.current_stage]
+                                        )}>
+                                            {g.current_stage.replace('_', ' ')}
+                                        </span>
 
-                                        {/* Stage pipeline mini */}
-                                        <div className="flex items-center gap-1 mt-3">
-                                            {STAGE_ORDER.map((stage, i) => (
-                                                <div
-                                                    key={stage}
-                                                    className={cn(
-                                                        "h-1.5 flex-1 rounded-full transition-all",
-                                                        i < stageIdx(g) ? "bg-ms-black" :
-                                                            i === stageIdx(g) ? "bg-ms-black/40" :
-                                                                "bg-ms-beige"
-                                                    )}
-                                                    title={stage}
-                                                />
-                                            ))}
-                                        </div>
-                                    </div>
-
-                                    {/* Stage badge */}
-                                    <span className={cn(
-                                        "text-[9px] font-black uppercase tracking-widest px-3 py-1.5 rounded-lg border flex-shrink-0",
-                                        STAGE_COLOR[g.current_stage]
-                                    )}>
-                                        {g.current_stage.replace('_', ' ')}
-                                    </span>
-
-                                    {/* Actions */}
-                                    <div className="flex items-center gap-2 flex-shrink-0">
-                                        <Link
-                                            href={user?.role === 'ADMIN'
-                                                ? `/admin/collections/${g.collection_id}/garments/${g.id}`
-                                                : `/client/collections/${g.collection_id}/garments/${g.id}`
-                                            }
-                                            className="flex items-center gap-1.5 px-4 py-2 bg-ms-black text-white text-[9px] font-black uppercase tracking-widest rounded-lg hover:bg-ms-black/80 transition-colors"
-                                        >
-                                            Manage
-                                            <ChevronRight className="w-3 h-3" />
-                                        </Link>
-                                        {canEdit && (
-                                            <button
-                                                onClick={() => handleDelete(g)}
-                                                className="p-2 text-ms-gray hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors opacity-0 group-hover:opacity-100"
-                                                title="Delete garment"
+                                        {/* Actions */}
+                                        <div className="flex items-center gap-2">
+                                            <Link
+                                                href={user?.role === 'ADMIN'
+                                                    ? `/admin/collections/${g.collection_id}/garments/${g.id}`
+                                                    : `/client/collections/${g.collection_id}/garments/${g.id}`
+                                                }
+                                                className="flex items-center gap-1.5 px-4 py-2 bg-ms-black text-white text-[9px] font-black uppercase tracking-widest rounded-lg hover:bg-ms-black/80 transition-colors whitespace-nowrap"
                                             >
-                                                <Trash2 className="w-4 h-4" />
-                                            </button>
-                                        )}
+                                                Manage
+                                                <ChevronRight className="w-3 h-3" />
+                                            </Link>
+                                            {canEdit && (
+                                                <button
+                                                    onClick={() => handleDelete(g)}
+                                                    className="p-2 text-ms-gray hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors opacity-100 sm:opacity-0 sm:group-hover:opacity-100"
+                                                    title="Delete garment"
+                                                >
+                                                    <Trash2 className="w-4 h-4" />
+                                                </button>
+                                            )}
+                                        </div>
                                     </div>
                                 </div>
+
                             </div>
                         );
                     })}

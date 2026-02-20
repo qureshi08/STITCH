@@ -54,17 +54,18 @@ export default function AdminCollectionsPage() {
 
     return (
         <div className="space-y-8 pb-20">
-            <div className="flex items-end justify-between">
+            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 sm:gap-0">
                 <div>
                     <h1 className="text-4xl font-bold text-ms-black font-serif italic tracking-tighter">Collections</h1>
                     <p className="text-[11px] font-black uppercase tracking-[0.2em] text-ms-gray mt-3">
                         {collections.length} collection{collections.length !== 1 ? 's' : ''} in your studio
                     </p>
                 </div>
-                <Link href="/admin/collections/new" className="ms-button-primary bg-ms-black border-ms-black py-3 px-8 flex items-center gap-2 text-[10px] font-black uppercase tracking-widest">
+                <Link href="/admin/collections/new" className="ms-button-primary bg-ms-black border-ms-black py-3 px-8 flex items-center justify-center gap-2 text-[10px] font-black uppercase tracking-widest w-full sm:w-auto">
                     <Plus className="w-4 h-4" /> New Collection
                 </Link>
             </div>
+
 
             <div className="relative max-w-lg">
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-ms-gray" />

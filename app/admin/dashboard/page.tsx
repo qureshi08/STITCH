@@ -48,20 +48,21 @@ export default function AdminDashboard() {
     return (
         <div className="space-y-10 pb-20">
             {/* Header */}
-            <div className="flex items-end justify-between">
+            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 sm:gap-0">
                 <div>
-                    <h1 className="text-4xl font-bold text-ms-black font-serif italic tracking-tighter">Studio Overview</h1>
-                    <p className="text-[11px] font-black uppercase tracking-[0.2em] text-ms-gray mt-3">
+                    <h1 className="text-3xl sm:text-4xl font-bold text-ms-black font-serif italic tracking-tighter">Studio Overview</h1>
+                    <p className="text-[10px] sm:text-[11px] font-black uppercase tracking-[0.2em] text-ms-gray mt-2 sm:mt-3">
                         {new Date().toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' })} · {user?.name}
                     </p>
                 </div>
                 <div className="flex gap-3">
-                    <Link href="/admin/collections/new" className="ms-button-primary bg-ms-black py-3 px-8 flex items-center gap-2 text-[10px] font-black uppercase tracking-widest">
+                    <Link href="/admin/collections/new" className="ms-button-primary bg-ms-black py-3 px-6 sm:px-8 flex items-center justify-center gap-2 text-[10px] font-black uppercase tracking-widest w-full sm:w-auto">
                         <Plus className="w-4 h-4" />
                         Init Collection
                     </Link>
                 </div>
             </div>
+
 
             {/* Stats Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">

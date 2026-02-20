@@ -1,9 +1,11 @@
 import { createClient } from '@supabase/supabase-js';
 import { NextRequest, NextResponse } from 'next/server';
+import { getURL } from '@/lib/utils';
 
 export async function POST(req: NextRequest) {
     const body = await req.json();
     const { email, name, organization_id } = body;
+    const redirectTo = `${getURL()}login`;
 
     const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
     if (!SERVICE_KEY) {
@@ -26,6 +28,7 @@ export async function POST(req: NextRequest) {
     // Step 1: Invite the user — Supabase sends them a magic link email
     const { data: invite, error: inviteError } = await supabaseAdmin.auth.admin.inviteUserByEmail(email, {
         data: { name: name || email },
+        redirectTo,
     });
 
     if (inviteError) {

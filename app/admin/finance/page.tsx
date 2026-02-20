@@ -150,40 +150,40 @@ export default function AdminFinancePage() {
 
     return (
         <div className="space-y-10 animate-in fade-in duration-700 pb-20">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 sm:gap-0">
                 <div className="space-y-1">
-                    <h1 className="text-5xl font-bold text-ms-black font-serif italic tracking-tighter">Financial Hub</h1>
-                    <div className="flex items-center gap-3 mt-2">
-                        <span className="text-[10px] font-black text-ms-gray uppercase tracking-[0.2em]">Studio Cash Flow & Salary tracking</span>
+                    <h1 className="text-4xl sm:text-5xl font-bold text-ms-black font-serif italic tracking-tighter">Financial Hub</h1>
+                    <div className="flex flex-wrap items-center gap-2 sm:gap-3 mt-2">
+                        <span className="text-[10px] font-black text-ms-gray uppercase tracking-[0.2em]">Cash Flow & Salary</span>
                         <div className="w-1 h-1 bg-ms-gray/30 rounded-full" />
-                        <span className="text-[10px] font-black text-ms-gray uppercase tracking-[0.2em]">Live Fiscal Stream</span>
+                        <span className="text-[10px] font-black text-ms-gray uppercase tracking-[0.2em]">Fiscal Stream</span>
                     </div>
                 </div>
-                <div className="flex gap-4">
-                    <button className="ms-button-secondary py-3 px-6 text-[10px] font-black uppercase tracking-widest border-ms-black text-ms-black">
-                        <Download className="w-4 h-4 mr-2" /> Export Ledger
+                <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+                    <button className="ms-button-secondary py-3 px-6 text-[10px] font-black uppercase tracking-widest border-ms-black text-ms-black w-full sm:w-auto flex justify-center items-center">
+                        <Download className="w-4 h-4 mr-2" /> Export
                     </button>
                     <button
                         onClick={() => setShowNewModal(true)}
-                        className="ms-button-primary bg-ms-black border-ms-black py-3 px-8 text-[10px] font-black uppercase tracking-widest"
+                        className="ms-button-primary bg-ms-black border-ms-black py-3 px-8 text-[10px] font-black uppercase tracking-widest w-full sm:w-auto flex justify-center items-center"
                     >
                         + New Entry
                     </button>
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
                 {[
                     { label: 'Available Studio Cash', val: availableCash, extra: 'Total Liquid Earnings' },
                     { label: 'Total Studio Income', val: totalReceived, extra: 'Money in from Clients' },
                     { label: 'Total Project Outflow', val: totalSpent, extra: 'Payments to Vendors' },
                 ].map((stat, i) => (
                     <div key={i} className={cn(
-                        "ms-card p-8 space-y-3",
+                        "ms-card p-6 sm:p-8 space-y-3",
                         i === 0 ? "bg-ms-black text-white" : "bg-white"
                     )}>
                         <p className={cn("text-[9px] font-black uppercase tracking-[0.3em]", i === 0 ? "opacity-40" : "text-ms-gray")}>{stat.label}</p>
-                        <h3 className="text-4xl font-bold font-serif italic">
+                        <h3 className="text-3xl sm:text-4xl font-bold font-serif italic">
                             ${stat.val.toLocaleString()}
                         </h3>
                         <p className={cn("text-[10px] font-bold uppercase tracking-tight", i === 0 ? "opacity-30" : "text-ms-gray/30")}>{stat.extra}</p>
@@ -191,57 +191,57 @@ export default function AdminFinancePage() {
                 ))}
             </div>
 
-            <div className="ms-card p-8 bg-ms-beige/20 border-ms-black/5">
-                <div className="flex items-center justify-between mb-6">
+            <div className="ms-card p-6 sm:p-8 bg-ms-beige/20 border-ms-black/5">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
                     <h3 className="text-[11px] font-black uppercase tracking-[0.3em] text-ms-black">Personal Salary Overview (YTD)</h3>
-                    <span className="text-[10px] font-black uppercase bg-ms-black text-white px-3 py-1 rounded-full">Admin Only</span>
+                    <span className="text-[10px] font-black uppercase bg-ms-black text-white px-3 py-1 rounded-full w-fit">Admin Only</span>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
                     <div>
                         <p className="text-[9px] font-black uppercase tracking-widest text-ms-gray">Total Earnings Received</p>
                         <p className="text-xl font-bold font-serif italic mt-1">${(stats?.totalEarnings || 0).toLocaleString()}</p>
-                        <p className="text-[8px] text-ms-gray mt-1 font-bold opacity-40 uppercase">Invoices + Salary Payments</p>
+                        <p className="text-[8px] text-ms-gray mt-1 font-bold opacity-40 uppercase truncate">Invoices + Payments</p>
                     </div>
                     <div>
                         <p className="text-[9px] font-black uppercase tracking-widest text-ms-gray">Outstanding Receivable</p>
                         <p className="text-xl font-bold font-serif italic mt-1 text-orange-600">${(stats?.totalReceivable || 0).toLocaleString()}</p>
                     </div>
-                    <div className="col-span-2">
+                    <div className="sm:col-span-2">
                         <p className="text-[9px] font-black uppercase tracking-widest text-ms-gray">Net Studio Liquidity</p>
                         <p className="text-xl font-bold font-serif italic mt-1 text-green-600">${(stats?.netLiquidity || 0).toLocaleString()}</p>
                         <div className="h-1.5 w-full bg-ms-black/5 rounded-full mt-3 overflow-hidden">
                             <div className="h-full bg-ms-black" style={{ width: `${Math.min(100, (stats?.totalEarnings / (stats?.totalContractValue || 1)) * 100)}%` }} />
                         </div>
                         <p className="text-[8px] text-ms-gray mt-2 font-bold opacity-40 uppercase">
-                            {((stats?.totalEarnings / (stats?.totalContractValue || 1)) * 100).toFixed(1)}% of total pipeline value cleared
+                            {((stats?.totalEarnings / (stats?.totalContractValue || 1)) * 100).toFixed(1)}% cleared
                         </p>
                     </div>
                 </div>
             </div>
 
             <div className="ms-card overflow-hidden border-ms-border">
-                <div className="flex border-b border-ms-border bg-ms-white">
+                <div className="flex flex-col sm:flex-row border-b border-ms-border bg-ms-white">
                     <button
                         onClick={() => setActiveTab('receivable')}
                         className={cn(
-                            "flex-1 py-5 text-[10px] font-black uppercase tracking-[0.3em] border-b-2 transition-all",
+                            "flex-1 py-4 sm:py-5 text-[10px] font-black uppercase tracking-[0.2em] sm:tracking-[0.3em] border-b-2 transition-all",
                             activeTab === 'receivable' ? "border-ms-black text-ms-black bg-ms-beige/10" : "border-transparent text-ms-gray"
                         )}
                     >
-                        Accounts Receivable (Clients)
+                        Accounts Receivable
                     </button>
                     <button
                         onClick={() => setActiveTab('payable')}
                         className={cn(
-                            "flex-1 py-5 text-[10px] font-black uppercase tracking-[0.3em] border-b-2 transition-all",
+                            "flex-1 py-4 sm:py-5 text-[10px] font-black uppercase tracking-[0.2em] sm:tracking-[0.3em] border-b-2 transition-all",
                             activeTab === 'payable' ? "border-ms-black text-ms-black bg-ms-beige/10" : "border-transparent text-ms-gray"
                         )}
                     >
-                        Accounts Payable (Vendors)
+                        Accounts Payable
                     </button>
                 </div>
 
-                <div className="divide-y divide-ms-border min-h-[500px] bg-white">
+                <div className="divide-y divide-ms-border min-h-[400px] bg-white">
                     {activeTab === 'receivable' ? (
                         isLoading ? (
                             <div className="p-32 flex justify-center"><Loader2 className="w-8 h-8 animate-spin text-ms-gray" /></div>
@@ -249,26 +249,26 @@ export default function AdminFinancePage() {
                             <div className="p-32 text-center text-ms-gray font-serif italic opacity-40">No client transactions found.</div>
                         ) : (
                             clientInvoices.map(inv => (
-                                <div key={inv.id} className="p-8 flex items-center justify-between hover:bg-ms-beige/5 transition-colors group">
-                                    <div className="flex items-center gap-6">
-                                        <div className="w-12 h-12 bg-ms-black text-white rounded-full flex items-center justify-center shadow-lg">
-                                            <ArrowDownLeft className="w-6 h-6" />
+                                <div key={inv.id} className="p-4 sm:p-8 flex flex-col sm:flex-row sm:items-center justify-between hover:bg-ms-beige/5 transition-colors group gap-4">
+                                    <div className="flex items-center gap-4 sm:gap-6">
+                                        <div className="hidden xs:flex w-10 h-10 sm:w-12 sm:h-12 bg-ms-black text-white rounded-full items-center justify-center shadow-lg flex-shrink-0">
+                                            <ArrowDownLeft className="w-5 h-5 sm:w-6 sm:h-6" />
                                         </div>
-                                        <div>
-                                            <p className="text-lg font-bold text-ms-black font-serif italic">{inv.milestone_name}</p>
-                                            <div className="flex items-center gap-3 mt-2">
-                                                <span className="text-[10px] text-ms-gray font-black uppercase tracking-widest">DUE {new Date(inv.due_date).toLocaleDateString()}</span>
+                                        <div className="min-w-0">
+                                            <p className="text-base sm:text-lg font-bold text-ms-black font-serif italic truncate">{inv.milestone_name}</p>
+                                            <div className="flex flex-wrap items-center gap-2 sm:gap-3 mt-1 sm:mt-2">
+                                                <span className="text-[9px] sm:text-[10px] text-ms-gray font-black uppercase tracking-widest whitespace-nowrap">DUE {new Date(inv.due_date).toLocaleDateString()}</span>
                                                 <span className="w-1 h-1 bg-ms-gray/20 rounded-full" />
-                                                <span className="text-[10px] text-ms-gray font-black uppercase tracking-widest truncate max-w-[200px]">
+                                                <span className="text-[9px] sm:text-[10px] text-ms-gray font-black uppercase tracking-widest truncate max-w-[150px] sm:max-w-[200px]">
                                                     {collections.find(c => c.id === inv.collection_id)?.name || 'Direct Payment'}
                                                 </span>
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="text-right">
-                                        <p className="text-2xl font-bold text-ms-black font-serif italic">${Number(inv.amount).toLocaleString()}</p>
+                                    <div className="flex items-center justify-between sm:flex-col sm:items-end gap-1 px-1 sm:px-0">
+                                        <p className="text-xl sm:text-2xl font-bold text-ms-black font-serif italic">${Number(inv.amount).toLocaleString()}</p>
                                         <span className={cn(
-                                            "text-[9px] font-black uppercase tracking-[0.2em] px-3 py-1 rounded inline-block mt-2",
+                                            "text-[9px] font-black uppercase tracking-[0.2em] px-3 py-1 rounded inline-block",
                                             inv.status === 'PAID' ? 'bg-green-500 text-white' : 'bg-ms-beige text-ms-gray border border-ms-border'
                                         )}>
                                             {inv.status}
@@ -284,24 +284,24 @@ export default function AdminFinancePage() {
                             <div className="p-32 text-center text-ms-gray font-serif italic opacity-40">No vendor liabilities found.</div>
                         ) : (
                             vendorInvoices.map(inv => (
-                                <div key={inv.id} className="p-8 flex items-center justify-between hover:bg-ms-beige/5 transition-colors group">
-                                    <div className="flex items-center gap-6">
-                                        <div className="w-12 h-12 bg-ms-beige border border-ms-border rounded-full flex items-center justify-center">
-                                            <ArrowUpRight className="w-6 h-6 text-ms-black" />
+                                <div key={inv.id} className="p-4 sm:p-8 flex flex-col sm:flex-row sm:items-center justify-between hover:bg-ms-beige/5 transition-colors group gap-4">
+                                    <div className="flex items-center gap-4 sm:gap-6">
+                                        <div className="hidden xs:flex w-10 h-10 sm:w-12 sm:h-12 bg-ms-beige border border-ms-border rounded-full items-center justify-center flex-shrink-0">
+                                            <ArrowUpRight className="w-5 h-5 sm:w-6 sm:h-6 text-ms-black" />
                                         </div>
-                                        <div>
-                                            <p className="text-lg font-bold text-ms-black font-serif italic">{inv.vendor_name || 'Generic Supplier'}</p>
-                                            <div className="flex items-center gap-3 mt-2">
-                                                <span className="text-[10px] text-ms-gray font-black uppercase tracking-widest">DUE {new Date(inv.due_date).toLocaleDateString()}</span>
+                                        <div className="min-w-0">
+                                            <p className="text-base sm:text-lg font-bold text-ms-black font-serif italic truncate">{inv.vendor_name || 'Generic Supplier'}</p>
+                                            <div className="flex flex-wrap items-center gap-2 sm:gap-3 mt-1 sm:mt-2">
+                                                <span className="text-[9px] sm:text-[10px] text-ms-gray font-black uppercase tracking-widest whitespace-nowrap">DUE {new Date(inv.due_date).toLocaleDateString()}</span>
                                                 <span className="w-1 h-1 bg-ms-gray/20 rounded-full" />
-                                                <span className="text-[10px] text-ms-gray font-black uppercase tracking-widest">Category: {inv.vendor_type || 'Expense'}</span>
+                                                <span className="text-[9px] sm:text-[10px] text-ms-gray font-black uppercase tracking-widest">Category: {inv.vendor_type || 'Expense'}</span>
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="text-right">
-                                        <p className="text-2xl font-bold text-ms-black font-serif italic">${Number(inv.amount).toLocaleString()}</p>
+                                    <div className="flex items-center justify-between sm:flex-col sm:items-end gap-1 px-1 sm:px-0">
+                                        <p className="text-xl sm:text-2xl font-bold text-ms-black font-serif italic">${Number(inv.amount).toLocaleString()}</p>
                                         <span className={cn(
-                                            "text-[9px] font-black uppercase tracking-[0.2em] px-3 py-1 rounded inline-block mt-2",
+                                            "text-[9px] font-black uppercase tracking-[0.2em] px-3 py-1 rounded inline-block",
                                             inv.status === 'PAID' ? 'bg-green-500 text-white' : 'bg-red-50 text-red-600 border border-red-100'
                                         )}>
                                             {inv.status}
@@ -313,6 +313,7 @@ export default function AdminFinancePage() {
                     )}
                 </div>
             </div>
+
 
             {showNewModal && (
                 <div className="fixed inset-0 bg-ms-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-6">

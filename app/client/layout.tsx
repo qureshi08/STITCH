@@ -10,6 +10,7 @@ import { Loader2 } from 'lucide-react';
 export default function ClientLayout({ children }: { children: React.ReactNode }) {
     const { user, isLoading } = useAuth();
     const router = useRouter();
+    const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
 
     useEffect(() => {
         if (!isLoading && (!user || user.role !== 'CLIENT')) {
@@ -27,10 +28,10 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
 
     return (
         <div className="flex min-h-screen bg-ms-bg">
-            <Sidebar role="CLIENT" />
+            <Sidebar role="CLIENT" isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
             <div className="flex-1 flex flex-col min-w-0">
-                <TopBar role="CLIENT" />
-                <main className="flex-1 p-8 pb-16 overflow-auto">
+                <TopBar role="CLIENT" setIsOpen={setIsSidebarOpen} />
+                <main className="flex-1 p-4 lg:p-8 pb-16 overflow-auto">
                     {children}
                 </main>
             </div>
